@@ -1,0 +1,40 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: synapse-backend
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: ./server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/rooms
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # Frontend Static Site
+  - type: web
+    name: synapse-frontend
+    runtime: static
+    rootDir: ./client
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./client/dist
+    previews:
+      generation: automatic
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_SERVER_URL
+        fromService:
+          type: web
+          name: synapse-backend
+          envVarKey: RENDER_EXTERNAL_URL

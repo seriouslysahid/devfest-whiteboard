@@ -1,0 +1,68 @@
+{
+  "43d021e9": {
+    "roomId": "43d021e9",
+    "hostId": "6b78b934-69dd-4e19-a213-5d29862e6fd5",
+    "operations": [],
+    "createdAt": 1768643899771
+  },
+  "9bf9adb7": {
+    "roomId": "9bf9adb7",
+    "hostId": "774f7f0c-bbd0-4e43-991d-0d4935939035",
+    "operations": [],
+    "createdAt": 1768643997628
+  },
+  "f9896e61": {
+    "roomId": "f9896e61",
+    "hostId": "25279879-abef-4fa3-af5c-2b6ca76045a0",
+    "operations": [],
+    "createdAt": 1768644068147
+  },
+  "927ACAE0": {
+    "roomId": "927ACAE0",
+    "hostId": "f6e33549-1d96-418a-87c6-f2028dd53405",
+    "password": null,
+    "hasPassword": false,
+    "operations": [],
+    "createdAt": 1768644225665
+  },
+  "28D8B0AC": {
+    "roomId": "28D8B0AC",
+    "hostId": "efe1e4ce-6974-4960-8169-1e0bb313f9b9",
+    "password": "A",
+    "hasPassword": true,
+    "operations": [],
+    "createdAt": 1768644258599
+  },
+  "546539C6": {
+    "roomId": "546539C6",
+    "hostId": "f883ed30-549c-456f-9fd5-9100fd6eceee",
+    "password": null,
+    "hasPassword": false,
+    "operations": [],
+    "createdAt": 1768653936591
+  },
+  "2824B523": {
+    "roomId": "2824B523",
+    "hostId": "aefae114-7c8a-47ef-acec-681909bb89dc",
+    "password": null,
+    "hasPassword": false,
+    "operations": [],
+    "createdAt": 1768744002768
+  },
+  "90D7B4CA": {
+    "roomId": "90D7B4CA",
+    "hostId": "3ea4934b-7e2a-43b8-a02a-91be04d4b83d",
+    "password": null,
+    "hasPassword": false,
+    "operations": [],
+    "createdAt": 1768746760061
+  },
+  "617624D8": {
+    "roomId": "617624D8",
+    "hostId": "6c307378-2383-45ab-97ef-e44612cff48d",
+    "password": null,
+    "hasPassword": false,
+    "operations": [],
+    "createdAt": 1768747778099
+  }
+}

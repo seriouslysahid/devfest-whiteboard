@@ -1,0 +1,41 @@
+[
+  {
+    "id": "1",
+    "name": "Sarah Chen",
+    "role": "CTO @ TechFlow",
+    "bio": "Building scalable AI systems. Interested in LLMs and edge computing. Organizing AI_Summit_2026.",
+    "interests": [
+      "AI",
+      "Scalability",
+      "Startups"
+    ],
+    "recentActivity": "Spoke at PyCon about transformer models.",
+    "lookingFor": "Talented engineers and potential co-founders."
+  },
+  {
+    "id": "2",
+    "name": "David Miller",
+    "role": "Angel Investor",
+    "bio": "Investing in early-stage SaaS and AI. Former founder of SoftSys.",
+    "interests": [
+      "Investing",
+      "SaaS",
+      "Growth"
+    ],
+    "recentActivity": "Shared a thread on the future of B2B sales.",
+    "lookingFor": "High growth startups to invest in."
+  },
+  {
+    "id": "3",
+    "name": "Emily Zhang",
+    "role": "Product Manager",
+    "bio": "Product at FinTechCo. Passionate about user-centric design.",
+    "interests": [
+      "Product Management",
+      "FinTech",
+      "UX"
+    ],
+    "recentActivity": "Launched a new payments feature.",
+    "lookingFor": "Mentorship from experienced PMs."
+  }
+]
