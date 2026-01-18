@@ -46,7 +46,7 @@ export function useHistory(initialOperations: DrawOperation[] = []): UseHistoryR
     });
     
     if (undoneOp) {
-      const opToRedo = undoneOp;
+      const opToRedo: DrawOperation = undoneOp;
       setRedoStack(prev => [...prev, opToRedo]);
       setOperationsState(prev => prev.filter(op => op.id !== opToRedo.id));
     }

@@ -115,7 +115,8 @@ const Whiteboard: React.FC<WhiteboardProps> = ({
   };
 
   const handleShare = async () => {
-    await navigator.clipboard.writeText(roomId);
+    const shareUrl = `${window.location.origin}/room/${roomId}`;
+    await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
