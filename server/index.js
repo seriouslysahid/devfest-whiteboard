@@ -8,7 +8,7 @@ const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 
 const aiRoutes = require('./routes/ai');
-const { saveRoom, deleteRoom, loadRooms } = require('./services/persistence');
+const { saveRoom, deleteRoom, loadRooms, getRoom } = require('./services/persistence');
 const {
   createGameSession,
   getGameSession,
@@ -66,33 +66,80 @@ const ROOM_CLEANUP_DELAY = 5 * 60 * 1000;
   }
 })();
 
-app.get('/api/rooms', (req, res) => {
-  const roomList = [];
-  for (const [roomId, room] of rooms) {
-    roomList.push({
-      roomId,
-      userCount: room.users.size,
-      hasPassword: room.hasPassword,
-      createdAt: room.createdAt
-    });
+async function findOrLoadRoom(roomId) {
+  if (!roomId) return null;
+  const normalizedRoomId = roomId.toUpperCase().trim();
+  
+  if (rooms.has(normalizedRoomId)) {
+    return rooms.get(normalizedRoomId);
   }
-  res.json({ rooms: roomList, count: roomList.length });
+  
+  try {
+    const room = await getRoom(normalizedRoomId);
+    if (room) {
+      if (!room.users || !(room.users instanceof Map)) {
+        room.users = new Map();
+      }
+      rooms.set(normalizedRoomId, room);
+      console.log(`[PERSISTENCE] Loaded room "${normalizedRoomId}" from storage`);
+      return room;
+    }
+  } catch (error) {
+    console.error(`Error loading room ${normalizedRoomId}:`, error);
+  }
+  
+  return null;
+}
+
+app.get('/api/rooms', async (req, res) => {
+  try {
+    const persistedRooms = await loadRooms();
+    const roomList = [];
+    
+    for (const [roomId, room] of persistedRooms) {
+      const activeRoom = rooms.get(roomId);
+      const userCount = activeRoom ? activeRoom.users.size : 0;
+      
+      roomList.push({
+        roomId,
+        userCount,
+        hasPassword: room.hasPassword,
+        createdAt: room.createdAt
+      });
+    }
+    
+    for (const [roomId, activeRoom] of rooms) {
+      if (!persistedRooms.has(roomId)) {
+        roomList.push({
+          roomId,
+          userCount: activeRoom.users.size,
+          hasPassword: activeRoom.hasPassword,
+          createdAt: activeRoom.createdAt
+        });
+      }
+    }
+    
+    res.json({ rooms: roomList, count: roomList.length });
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+    res.status(500).json({ error: 'Failed to fetch rooms' });
+  }
 });
 
-app.get('/api/rooms/:roomId', (req, res) => {
-  const roomId = req.params.roomId.toUpperCase().trim();
-  const room = rooms.get(roomId);
+app.get('/api/rooms/:roomId', async (req, res) => {
+  const room = await findOrLoadRoom(req.params.roomId);
   
   if (!room) {
+    const normalizedRoomId = req.params.roomId.toUpperCase().trim();
     return res.status(404).json({ 
       error: 'Room not found',
-      message: `Room "${roomId}" does not exist. Make sure to CREATE a room first, then share the Room ID.`,
+      message: `Room "${normalizedRoomId}" does not exist. Make sure to CREATE a room first, then share the Room ID.`,
       availableRooms: Array.from(rooms.keys())
     });
   }
   
   res.json({
-    roomId,
+    roomId: room.roomId,
     userCount: room.users.size,
     hasPassword: room.hasPassword,
     users: Array.from(room.users.values()).map(u => ({ name: u.name, role: u.role }))
@@ -143,12 +190,12 @@ io.on('connection', (socket) => {
     console.log(`[ROOMS] Active rooms: ${Array.from(rooms.keys()).join(', ') || 'none'}`);
   });
 
-  socket.on('check-room', ({ roomId }) => {
+  socket.on('check-room', async ({ roomId }) => {
     const normalizedRoomId = (roomId || '').toUpperCase().trim();
     console.log(`[CHECK] Checking room: "${normalizedRoomId}"`);
     console.log(`[ROOMS] Active rooms: ${Array.from(rooms.keys()).join(', ') || 'none'}`);
     
-    const room = rooms.get(normalizedRoomId);
+    const room = await findOrLoadRoom(normalizedRoomId);
     
     if (!room) {
       console.log(`[CHECK] Room "${normalizedRoomId}" NOT FOUND`);
@@ -169,12 +216,12 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('join-room', ({ roomId, userName, password, userId: providedUserId }) => {
+  socket.on('join-room', async ({ roomId, userName, password, userId: providedUserId }) => {
     const normalizedRoomId = (roomId || '').toUpperCase().trim();
     console.log(`[JOIN] User "${userName}" (ID: ${providedUserId || 'new'}) trying to join room: "${normalizedRoomId}"`);
     console.log(`[ROOMS] Active rooms: ${Array.from(rooms.keys()).join(', ') || 'none'}`);
     
-    const room = rooms.get(normalizedRoomId);
+    const room = await findOrLoadRoom(normalizedRoomId);
 
     if (!room) {
       console.log(`[JOIN] FAILED - Room "${normalizedRoomId}" not found`);

@@ -60,7 +60,8 @@ const RoomManager: React.FC<RoomManagerProps> = ({ onRoomJoined, initialJoinRoom
   const fetchPublicRooms = async () => {
     setIsLoadingRooms(true);
     try {
-      const response = await fetch('/api/rooms');
+      const baseUrl = import.meta.env.VITE_SERVER_URL || '';
+      const response = await fetch(`${baseUrl}/api/rooms`);
       const data = await response.json();
       setPublicRooms(data.rooms || []);
     } catch {
