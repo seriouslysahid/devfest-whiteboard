@@ -37,6 +37,7 @@ interface WhiteboardProps {
   initialOperations: DrawOperation[];
   users: User[];
   currentUserRole: 'host' | 'participant';
+  onLeave?: () => void;
 }
 
 const Whiteboard: React.FC<WhiteboardProps> = ({ 
@@ -45,7 +46,8 @@ const Whiteboard: React.FC<WhiteboardProps> = ({
   userName,
   initialOperations,
   users,
-  currentUserRole
+  currentUserRole,
+  onLeave
 }) => {
   const { socket } = useSocket();
   const { session, isDrawing: isGameDrawer } = useGame();
@@ -111,7 +113,11 @@ const Whiteboard: React.FC<WhiteboardProps> = ({
 
   const handleLeave = () => {
     setShowLeaveDialog(false);
-    window.location.reload();
+    if (onLeave) {
+      onLeave();
+    } else {
+      window.location.href = '/';
+    }
   };
 
   const handleShare = async () => {

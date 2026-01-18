@@ -340,6 +340,11 @@ function GameRoute() {
   }
 
   if (currentRoom) {
+    const handleLeaveRoom = () => {
+      clearSessionRoom();
+      navigate('/');
+    };
+
     return (
       <GameProvider
         roomId={currentRoom.roomId}
@@ -353,6 +358,7 @@ function GameRoute() {
           initialOperations={currentRoom.operations}
           users={currentRoom.users}
           currentUserRole={currentRoom.role}
+          onLeave={handleLeaveRoom}
         />
       </GameProvider>
     );
